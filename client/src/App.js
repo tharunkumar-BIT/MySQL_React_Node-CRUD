@@ -9,6 +9,7 @@ function App() {
   const [position, setPosition] = useState("");
   const [salary, setSalary] = useState("");
 
+  const [employeeList, setEmployeeList] = useState([]);
 
   const addEmployee = () => {
     axios
@@ -20,8 +21,20 @@ function App() {
         salary: salary,
       })
       .then(() => {
-        console.log("Successfully added employee");
+        setEmployeeList([...employeeList, {
+          name: name,
+          age: age,
+          country: country,
+          position: position,
+          salary: salary,
+        }]);
       });
+  };
+
+  const getEmployees = () => {
+    axios.get("http://localhost:3001/employees").then((res)=>{
+      setEmployeeList(res.data);
+    });
   };
 
   return (
@@ -76,7 +89,19 @@ function App() {
       </div>
 
       <div className="employees">
-        <button>Show Employees</button>
+        <button onClick={getEmployees}>Show Employees</button>
+
+        {employeeList && employeeList.map((val,key) => {
+          return(
+            <div className="employee" key={key}>
+              <p>Name: {val.name}</p>
+              <p>Age: {val.age}</p>
+              <p>Country: {val.country}</p>
+              <p>Position: {val.position}</p>
+              <p>Salary: {val.salary}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
